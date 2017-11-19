@@ -80,9 +80,11 @@ function module.start()
 
     -- configure wifi
     print("Configuring Wifi")
+    ssid, password, bssid_set, bssid=wifi.sta.getconfig()
+    print("Connecting to "..ssid)
     wifi.sta.autoconnect(1)
     -- wait for an IP
-    print("waiting for wifi...")
+    print("Waiting for wifi...")
     waitForIp()
 end
 
