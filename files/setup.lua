@@ -24,23 +24,25 @@ function start_endusersetup()
     )
 end
 
+wifi_status_codes = {
+    [0] = "Idle",
+    [1] = "Connecting",
+    [2] = "Wrong Password",
+    [3] = "No AP Found",
+    [4] = "Connection Failed",
+    [5] = "Got IP"
+}
+
 -- wait for an IP (10 sec max)
 function waitForIp()
-    cnt = 20
-    tmr.alarm(0, 500, 1,
+    rgb(100, 0, 0)
+    tmr.alarm(1, 1000, 1,
         function()
             if wifi.sta.getip() == nil then
-                cnt = cnt - 1
-                if cnt <= 0 then
-                    -- Did not get an IP in time, so quitting
-                    tmr.stop(0)
-                    rgb(1023, 0, 0)
-                    print "Not connected to wifi."
-                end
+                print("Waiting for IP address! (Status: " .. wifi_status_codes[wifi.sta.status()] .. ")")
             else
-                -- Connected to the wifi
-                tmr.stop(0)
-                print("\nGot an ip. Starting...")
+                print("New IP address is " .. wifi.sta.getip())
+                tmr.stop(1)
                 rgb(0, 100, 0)
                 app.start()
             end
@@ -82,6 +84,8 @@ function module.start()
     print("Configuring Wifi")
     ssid, password, bssid_set, bssid=wifi.sta.getconfig()
     print("Connecting to "..ssid)
+    -- clear variables after usage for security
+    ssid, password, bssid_set, bssid=nil, nil, nil, nil
     wifi.sta.autoconnect(1)
     -- wait for an IP
     print("Waiting for wifi...")
