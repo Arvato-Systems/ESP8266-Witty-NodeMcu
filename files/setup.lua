@@ -39,7 +39,11 @@ function waitForIp()
     tmr.alarm(1, 1000, 1,
         function()
             if wifi.sta.getip() == nil then
-                print("Waiting for IP address! (Status: " .. wifi_status_codes[wifi.sta.status()] .. ")")
+                if wifi.sta.status() ~= nil and wifi_status_codes[wifi.sta.status()] ~= nil then
+                    print("Waiting for IP address! (Status: " .. wifi_status_codes[wifi.sta.status()] .. ")")
+                else
+                    print("Waiting for IP address!")
+                end
             else
                 print("New IP address is " .. wifi.sta.getip())
                 tmr.stop(1)
